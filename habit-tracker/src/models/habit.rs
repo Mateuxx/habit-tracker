@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize)]
 pub struct Habit {
@@ -6,7 +6,7 @@ pub struct Habit {
     pub title: String,
     pub completed: bool,
 }
-
+#[derive(Serialize, Deserialize)]
 pub struct CreateHabit {
     pub title: String,
     pub completed: bool,

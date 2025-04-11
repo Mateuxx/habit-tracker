@@ -1,5 +1,6 @@
 use axum::{ http::StatusCode, Json };
 use crate::models::habit::{ CreateHabit, Habit };
+use axum::debug_handler;
 
 //Returns a list of mock habits
 pub async fn list_habits() -> (StatusCode, Json<Vec<Habit>>) {
@@ -20,11 +21,8 @@ pub async fn list_habits() -> (StatusCode, Json<Vec<Habit>>) {
 }
 
 // post Handler - returns a list
-
-pub async fn create_habit_handler(
-    //Axum receivies the request and tries to convert to a instance of CreateHabit
-    Json(payload): Json<CreateHabit>
-) -> (StatusCode, Json<Habit>) {
+#[debug_handler]
+pub async fn create_habit(Json(payload): Json<CreateHabit>) -> (StatusCode, Json<Habit>) {
     let new_habit = Habit {
         id: 3,
         title: payload.title,

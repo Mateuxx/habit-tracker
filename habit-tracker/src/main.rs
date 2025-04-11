@@ -1,15 +1,15 @@
 mod handlers;
 mod models;
 
+use axum::routing::post;
 //axum http framework dependencies
 //use its like the import for rust
 use axum::{ routing::get, Json, Router };
 use serde::Serialize;
 use std::net::SocketAddr;
 
-use crate::handlers::habit_handler::list_habits;
+use crate::handlers::habit_handler::{list_habits, create_habit};
 use crate::models::habit::Habit;
-
 
 #[derive(Serialize)]
 struct PingResponse {
@@ -30,7 +30,9 @@ async fn main() {
     let app = Router::new()
         .route("/ping", get(ping_handler))
         .route("/habit-test", get(habit_handler))
-        .route("/habits", get(list_habits));
+        .route("/habits", get(list_habits))
+        .route("/habits", post(create_habit));
+
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     println!("Servidor rodando em http://{}", addr);

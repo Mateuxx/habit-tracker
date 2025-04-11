@@ -1,0 +1,2 @@
+fn(axum::Json<CreateHabit>) -> impl Future<Output = (StatusCode, axum::Json<Habit>)> {create_habit}
+fn(axum::Json<CreateHabit>) -> impl Future<Output = (StatusCode, axum::Json<Habit>)> {create_habit}: Handler<_, _>
