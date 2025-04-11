@@ -1,11 +1,15 @@
-//axum http framework dependencies
-//use its like the import for rust
+mod handlers;
 mod models;
 
+//axum http framework dependencies
+//use its like the import for rust
 use axum::{ routing::get, Json, Router };
 use serde::Serialize;
 use std::net::SocketAddr;
+
+use crate::handlers::habit_handler::list_habits;
 use crate::models::habit::Habit;
+
 
 #[derive(Serialize)]
 struct PingResponse {
@@ -16,7 +20,7 @@ struct PingResponse {
 async fn ping_handler() -> Json<PingResponse> {
     Json(PingResponse { ok: true })
 }
-
+//this is just a test handler
 async fn habit_handler() -> Json<Habit> {
     Json(Habit { id: 1, title: "beber agua".to_string(), completed: false })
 }
@@ -25,7 +29,8 @@ async fn habit_handler() -> Json<Habit> {
 async fn main() {
     let app = Router::new()
         .route("/ping", get(ping_handler))
-        .route("/habit-test", get(habit_handler));
+        .route("/habit-test", get(habit_handler))
+        .route("/habits", get(list_habits));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     println!("Servidor rodando em http://{}", addr);

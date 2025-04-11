@@ -6,3 +6,8 @@ pub struct Habit {
     pub title: String,
     pub completed: bool,
 }
+
+pub struct CreateHabit {
+    pub title: String,
+    pub completed: bool,
+}
