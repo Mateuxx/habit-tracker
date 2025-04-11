@@ -1,33 +1,31 @@
-use axum::{ http::StatusCode, Json };
-use crate::models::habit::{ CreateHabit, Habit };
+use std::sync::Arc;
+
+use crate::models::{ habit::{ self, CreateHabit, Habit }, state::AppState };
 use axum::debug_handler;
+use axum::{ Json, extract::State, http::StatusCode };
 
 //Returns a list of mock habits
-pub async fn list_habits() -> (StatusCode, Json<Vec<Habit>>) {
-    let habits = vec![
-        Habit {
-            id: 1,
-            title: "Beber água".to_string(),
-            completed: false,
-        },
-        Habit {
-            id: 2,
-            title: "Caminhar e Cardio de 30".to_string(),
-            completed: false,
-        }
-    ];
-
-    (StatusCode::OK, Json(habits))
+pub async fn list_habits(State(state): State<Arc<AppState>>) -> (StatusCode, Json<Vec<Habit>>) {
+    let habits = state.habits.lock().unwrap(); //unlock this so we can useee
+    (StatusCode::OK, Json(habits.clone()))
 }
 
 // post Handler - returns a list
 #[debug_handler]
-pub async fn create_habit(Json(payload): Json<CreateHabit>) -> (StatusCode, Json<Habit>) {
-    let new_habit = Habit {
-        id: 3,
-        title: payload.title,
-        completed: payload.completed,
-    };
+pub async fn create_habit(
+    //extraindo aqui as coisas, o estado e o payload e
+    // aqui eu faço a extração do state passado e atribuo a variavel state
+    State(state): State<Arc<AppState>>,
+    //extraactor do json e eu estou dizendo que eu quero que ele tenha desustrado para um CreateHabit
+    //aqui eu estraio o json do tipo CreateHabit e coloco na variavel payload
+    Json(payload): Json<CreateHabit>
+) -> (StatusCode, Json<Habit>) {
+    let mut habits = state.habits.lock().unwrap();
+    
 
-    (StatusCode::CREATED, Json(new_habit))
+    let new_habit = Habit {
+        id: (habits.len() +1 ) as u32,
+        title: payload.title,
+
+    }
 }

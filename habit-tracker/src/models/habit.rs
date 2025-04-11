@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
+use serde::{ Deserialize, Serialize };
 
-#[derive(Serialize)]
+#[derive(Clone, Serialize, Debug)]
 pub struct Habit {
     pub id: u32,
     pub title: String,

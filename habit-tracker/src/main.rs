@@ -1,15 +1,16 @@
 mod handlers;
 mod models;
 
-use axum::routing::post;
 //axum http framework dependencies
 //use its like the import for rust
 use axum::{ routing::get, Json, Router };
+use axum::routing::post;
 use serde::Serialize;
-use std::net::SocketAddr;
-
-use crate::handlers::habit_handler::{list_habits, create_habit};
+use std::sync::Mutex;
+use std::{ net::SocketAddr, sync::Arc };
+use crate::handlers::habit_handler::{ list_habits, create_habit };
 use crate::models::habit::Habit;
+use crate::models::state::AppState;
 
 #[derive(Serialize)]
 struct PingResponse {
@@ -27,12 +28,19 @@ async fn habit_handler() -> Json<Habit> {
 
 #[tokio::main]
 async fn main() {
+    //lista inicial de habitos -> preenchidos de forma dinamica
+    //Arc garante que o estado seja compartilhado enter multiplcas threads
+    //inicializa um vetor fazio com mutex que garante acesso seguro
+    let state = Arc::new(AppState {
+        habits: Mutex::new(vec![]),
+    });
+
     let app = Router::new()
         .route("/ping", get(ping_handler))
         .route("/habit-test", get(habit_handler))
         .route("/habits", get(list_habits))
-        .route("/habits", post(create_habit));
-
+        .route("/habits", post(create_habit))
+        .with_state(state); //injeta o Arc<AppState>
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     println!("Servidor rodando em http://{}", addr);
