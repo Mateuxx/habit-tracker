@@ -1,8 +1,9 @@
 use std::sync::Arc;
 
-use crate::models::habit::CreateHabit;
+use crate::models::habit::{CreateHabit, UpdateHabit};
 use crate::models::{ habit::Habit, state::AppState };
 use axum::debug_handler;
+use axum::extract::Path;
 use axum::{ Json, extract::State, http::StatusCode };
 
 //Returns a list of mock habits
@@ -35,4 +36,26 @@ pub async fn create_habit(
 
     //this is like a return with the
     (StatusCode::CREATED, Json(new_habit))
+}
+pub async fn update_habit(
+    Path(id): Path<u32>,
+    State(state): State<Arc<AppState>>,
+    Json(payload): Json<UpdateHabit>
+) -> (StatusCode, Json<Option<Habit>>) {
+    let mut habits = state.habits.lock().unwrap();
+
+    //SOME - check if an OPTION has a value and if does, extract the value to variable 
+    if let Some(habit) = habits.iter_mut().find(|h| h.id == id) {
+        if let Some(new_title) = payload.title.clone() {
+            habit.title = new_title;
+        }
+    
+        if let Some(new_completed) = payload.completed {
+            habit.completed = new_completed; 
+        }
+    
+        return (StatusCode::OK, Json(Some(habit.clone())));
+    }
+
+    (StatusCode::NOT_FOUND, Json(None))
 }

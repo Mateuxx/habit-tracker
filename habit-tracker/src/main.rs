@@ -4,7 +4,8 @@ mod models;
 //axum http framework dependencies
 //use its like the import for rust
 use axum::{ routing::get, Json, Router };
-use axum::routing::post;
+use axum::routing::{ post, put };
+use handlers::habit_handler::update_habit;
 use serde::Serialize;
 use std::sync::Mutex;
 use std::{ net::SocketAddr, sync::Arc };
@@ -40,6 +41,7 @@ async fn main() {
         .route("/habit-test", get(habit_handler))
         .route("/habits", get(list_habits))
         .route("/habits", post(create_habit))
+        .route("/habits/{id}", put(update_habit))
         .with_state(state); //injeta o Arc<AppState>
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
