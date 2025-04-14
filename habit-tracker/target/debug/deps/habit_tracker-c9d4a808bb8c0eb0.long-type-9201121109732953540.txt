@@ -1,2 +1,0 @@
-fn(State<Arc<AppState>>, Json<CreateHabit>) -> impl Future<Output = (StatusCode, Json<Habit>, std::string::String)> {habit_handler::create_habit}
-fn(State<Arc<AppState>>, Json<CreateHabit>) -> impl Future<Output = (StatusCode, Json<Habit>, std::string::String)> {habit_handler::create_habit}: Handler<_, _>

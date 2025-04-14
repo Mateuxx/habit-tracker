@@ -1,2 +1,0 @@
-fn(Json<CreateHabit>) -> impl Future<Output = (StatusCode, Json<Habit>)> {habit_handler::create_habit}
-fn(Json<CreateHabit>) -> impl Future<Output = (StatusCode, Json<Habit>)> {habit_handler::create_habit}: Handler<_, _>
