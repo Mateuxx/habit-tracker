@@ -2,18 +2,29 @@ mod handlers;
 mod models;
 mod routes;
 
-use std::sync::Mutex;
+use std::env;
 use std::{ net::SocketAddr, sync::Arc };
+use dotenvy::dotenv;
+use sqlx::postgres::PgPoolOptions;
+
 use crate::models::state::AppState;
 use crate::routes::create_routes;
 
 #[tokio::main]
 async fn main() {
-    //lista inicial de habitos -> preenchidos de forma dinamica
-    //Arc garante que o estado seja compartilhado enter multiplcas threads
-    //inicializa um vetor fazio com mutex que garante acesso seguro
+    dotenv().ok();
+
+    //Database connection
+    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL não definida no .env");
+
+    let pool = PgPoolOptions::new()
+        .max_connections(5)
+        .connect(&db_url).await
+        .expect("Erro ao conectar no banco de dados");
+
+    // now our databse connection receives
     let state = Arc::new(AppState {
-        habits: Mutex::new(vec![]),
+        db: pool,
     });
 
     //router more clean

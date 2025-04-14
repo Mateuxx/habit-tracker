@@ -1,7 +1,6 @@
-use std::sync::Mutex;
-use crate::models::habit::Habit;
+use sqlx::PgPool;
 
-#[derive(Debug)]
+#[derive(Clone)]
 pub struct AppState {
-    pub habits: Mutex<Vec<Habit>>,
+    pub db: PgPool,
 }
