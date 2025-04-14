@@ -32,3 +32,4 @@ pub fn habit_routes(state: Arc<AppState>) -> Router {
         .route("/habits/{id}", put(update_habit))
         .with_state(state)
 }
+
